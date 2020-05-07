@@ -1,0 +1,361 @@
+{
+    "name": "discord-chat",
+    "displayName": "Discord Chat",
+    "description": "A discord text chat client for vscode",
+    "keywords": [],
+    "version": "0.3.5",
+    "icon": "resources/discord-chat.png",
+    "publisher": "Gruntfuggly",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "repository": "https://github.com/Gruntfuggly/discord-chat",
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "discord-chat-container",
+                    "title": "Discord",
+                    "icon": "resources/discord-chat-container.svg"
+                }
+            ]
+        },
+        "views": {
+            "explorer": [
+                {
+                    "id": "discord-chat-view-explorer",
+                    "name": "Discord",
+                    "when": "discord-chat-in-explorer && discord-chat-tree-not-empty"
+                }
+            ],
+            "discord-chat-container": [
+                {
+                    "id": "discord-chat-view",
+                    "name": "Discord"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "discord-chat.refresh",
+                    "when": "view =~ /discord-chat/",
+                    "group": "navigation@5"
+                },
+                {
+                    "command": "discord-chat.showAll",
+                    "when": "view =~ /discord-chat/ && discord-show-unread-only == true",
+                    "group": "navigation@4"
+                },
+                {
+                    "command": "discord-chat.showUnreadOnly",
+                    "when": "view =~ /discord-chat/ && discord-show-unread-only == false",
+                    "group": "navigation@4"
+                },
+                {
+                    "command": "discord-chat.createChannel",
+                    "when": "view =~ /discord-chat/ && discord-server-selected",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "discord-chat.mute",
+                    "when": "view =~ /discord-chat/ && discord-can-mute",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "discord-chat.unmute",
+                    "when": "view =~ /discord-chat/ && discord-can-unmute",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "discord-chat.markServerRead",
+                    "when": "view =~ /discord-chat/ && discord-server-has-unread && discord-can-mute",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "discord-chat.markChannelRead",
+                    "when": "view =~ /discord-chat/ && discord-channel-has-unread",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "discord-chat.post",
+                    "when": "view =~ /discord-chat/ && discord-channel-selected",
+                    "group": "navigation@1"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "discord-chat.markServerRead",
+                    "when": "view =~ /discord-chat/ && viewItem == server"
+                },
+                {
+                    "command": "discord-chat.markChannelRead",
+                    "when": "view =~ /discord-chat/ && viewItem == channel"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "discord-chat.markChannelRead",
+                    "when": "discord-channel-focused"
+                },
+                {
+                    "command": "discord-chat.post",
+                    "when": "discord-channel-focused"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "discord-chat.post",
+                "title": "Post Message",
+                "category": "discord-chat",
+                "when": "discord-channel-selected",
+                "icon": {
+                    "dark": "resources/icons/dark/post.svg",
+                    "light": "resources/icons/light/post.svg"
+                }
+            },
+            {
+                "command": "discord-chat.editPost",
+                "title": "Edit Post",
+                "category": "discord-chat",
+                "when": "discord-channel-selected"
+            },
+            {
+                "command": "discord-chat.postSelection",
+                "title": "Post Selection",
+                "category": "discord-chat",
+                "when": "discord-channel-selected",
+                "icon": {
+                    "dark": "resources/icons/dark/post.svg",
+                    "light": "resources/icons/light/post.svg"
+                }
+            },
+            {
+                "command": "discord-chat.refresh",
+                "title": "Refresh",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/refresh.svg",
+                    "light": "resources/icons/light/refresh.svg"
+                }
+            },
+            {
+                "command": "discord-chat.markChannelRead",
+                "title": "Mark Channel Read",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/mark-read.svg",
+                    "light": "resources/icons/light/mark-read.svg"
+                }
+            },
+            {
+                "command": "discord-chat.markServerRead",
+                "title": "Mark All Channels on Server as Read",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/mark-read.svg",
+                    "light": "resources/icons/light/mark-read.svg"
+                }
+            },
+            {
+                "command": "discord-chat.markAllRead",
+                "title": "Mark All Read",
+                "category": "discord-chat"
+            },
+            {
+                "command": "discord-chat.createChannel",
+                "title": "Create Channel",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/add.svg",
+                    "light": "resources/icons/light/add.svg"
+                }
+            },
+            {
+                "command": "discord-chat.mute",
+                "title": "Mute",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/mute.svg",
+                    "light": "resources/icons/light/mute.svg"
+                }
+            },
+            {
+                "command": "discord-chat.showAll",
+                "title": "Show All",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/unread.svg",
+                    "light": "resources/icons/light/unread.svg"
+                }
+            },
+            {
+                "command": "discord-chat.showUnreadOnly",
+                "title": "Show Unread Only",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/read.svg",
+                    "light": "resources/icons/light/read.svg"
+                }
+            },
+            {
+                "command": "discord-chat.unmute",
+                "title": "Unmute",
+                "category": "discord-chat",
+                "icon": {
+                    "dark": "resources/icons/dark/unmute.svg",
+                    "light": "resources/icons/light/unmute.svg"
+                }
+            },
+            {
+                "command": "discord-chat.deleteChannel",
+                "title": "Delete Channel",
+                "category": "discord-chat"
+            },
+            {
+                "command": "discord-chat.leaveServer",
+                "title": "Leave Server",
+                "category": "discord-chat"
+            },
+            {
+                "command": "discord-chat.resetSync",
+                "title": "Reset Sync",
+                "category": "discord-chat"
+            },
+            {
+                "command": "discord-chat.closeChannel",
+                "title": "Close Channel",
+                "category": "discord-chat"
+            },
+            {
+                "command": "discord-chat.resetChannelUnread",
+                "title": "Reset Channel Unread",
+                "category": "discord-chat"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Discord Chat",
+            "properties": {
+                "discord-chat.token": {
+                    "type": "string",
+                    "description": "Your discord token",
+                    "default": ""
+                },
+                "discord-chat.compactView": {
+                    "type": "boolean",
+                    "description": "Puts date, time, name and message on one line",
+                    "default": false
+                },
+                "discord-chat.notify": {
+                    "type": "string",
+                    "enum": [
+                        "always",
+                        "whenHidden",
+                        "never"
+                    ],
+                    "description": "When to show popup notifications",
+                    "default": "whenHidden"
+                },
+                "discord-chat.history": {
+                    "type": "integer",
+                    "description": "Number of messages to fetch when opening a channel",
+                    "default": 10
+                },
+                "discord-chat.showInExplorer": {
+                    "type": "boolean",
+                    "description": "If true, show the tree in the explorer. Set to false if you only want to use the dedicated tree in the activity bar",
+                    "default": true
+                },
+                "discord-chat.useIcons": {
+                    "type": "boolean",
+                    "description": "Set this to false to disable the use of server icons",
+                    "default": true
+                },
+                "discord-chat.syncEnabled": {
+                    "type":"boolean",
+                    "description":"Enable syncing of read state via gist",
+                    "default": true
+                },
+                "discord-chat.syncToken": {
+                    "type": "string",
+                    "description": "A github token to allow sync via gist"
+                },
+                "discord-chat.syncGistId": {
+                    "type": "string",
+                    "description": "A github gist ID used to store shared settings"
+                },
+                "discord-chat.hideMutedChannels": {
+                    "type": "boolean",
+                    "description": "Set to true to remove muted channels from the tree",
+                    "default": false
+                },
+                "discord-chat.hideMutedServers": {
+                    "type": "boolean",
+                    "description": "Set to true to remove muted servers from the tree",
+                    "default": false
+                },
+                "discord-chat.debug": {
+                    "type": "boolean",
+                    "description": "Set to true to log debug information from discord.js",
+                    "default": false
+                },
+                "discord-chat.showUnreadOnly": {
+                    "type": "boolean",
+                    "description": "Set to true to only show channels and servers with unread messages",
+                    "default": false
+                },
+                "discord-chat.hideEmptyTree": {
+                    "type": "boolean",
+                    "description": "Set to true to hide the tree in the explorer view when there is nothing in it",
+                    "default": false
+                },
+                "discord-chat.autoShow": {
+                    "type": "boolean",
+                    "description": "Set to true to automatically open the output channel when a message is received (and no other channels are open)",
+                    "default": false
+                },
+                "discord-chat.autoHide": {
+                    "type": "integer",
+                    "description": "If no messages are received after this many seconds, close the output channel (Set to 0 to disable)",
+                    "default": 0
+                },
+                "discord-chat.fetchUnreadMessages": {
+                    "type": "boolean",
+                    "description": "Set to false if you don't want to count unread messages at startup",
+                    "default": true
+                },
+                "discord-chat.mutedChannels": {
+                    "type": "object",
+                    "markdownDescription": "*No longer required - do not use*"
+                },
+                "discord-chat.mutedServers": {
+                    "type": "object",
+                    "markdownDescription": "*No longer required - do not use*"
+                },
+                "discord-chat.lastRead": {
+                    "type": "object",
+                    "markdownDescription": "*No longer required - do not use*"
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "discord.js": "^11.3.2",
+        "gistore": "^0.1.1",
+        "strftime": "^0.10.0"
+    },
+    "__metadata": {
+        "id": "2ff389e9-081e-4c46-bc25-232616d2191c",
+        "publisherDisplayName": "Gruntfuggly",
+        "publisherId": "d4906d2e-f2ee-492d-9c7c-02b6160599ec"
+    }
+}
